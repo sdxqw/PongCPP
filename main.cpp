@@ -63,7 +63,8 @@ public:
     void update(const float dt) {
         if (isColliding(player) || isColliding(enemy)) dX *= -1;
         if (shape.getPosition().y <= 0 || shape.getPosition().y + shape.getRadius() * 2 >= static_cast<float>(
-                WindowHeight)) dY *= -1;
+                WindowHeight))
+            dY *= -1;
         shape.move(static_cast<float>(BallSpeed) * 2 * dX * dt, static_cast<float>(BallSpeed) * 2 * dY * dt);
 
         if (shape.getPosition().x < 0) {
@@ -152,6 +153,8 @@ int main() {
     sf::Font font;
     if (!font.loadFromFile(FontPath)) std::cout << "Error loading font" << std::endl;
 
+    bool dead = false;
+
     sf::Clock clock;
     SceneType currentScene = SceneType::MainMenu;
     while (window.isOpen()) {
@@ -161,7 +164,8 @@ int main() {
             if (event.type == sf::Event::Closed) window.close();
         }
 
-        if (PlayerScore == MaxScore || EnemyScore == MaxScore) currentScene = SceneType::GameOver;
+        if ((PlayerScore == MaxScore || EnemyScore == MaxScore) && !dead)
+            currentScene = SceneType::GameOver;
 
         window.clear();
         switch (currentScene) {
@@ -179,8 +183,16 @@ int main() {
                 break;
             case SceneType::GameOver:
                 renderGameOver(window, font);
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) currentScene = SceneType::Game;
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) currentScene = SceneType::MainMenu;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                    currentScene = SceneType::Game;
+                    reset(player, enemy, ball);
+                    dead = true;
+                }
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
+                    currentScene = SceneType::MainMenu;
+                    reset(player, enemy, ball);
+                    dead = true;
+                }
                 break;
         }
         window.display();
