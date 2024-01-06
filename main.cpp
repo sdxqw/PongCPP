@@ -19,9 +19,10 @@ public:
 
     void updatePlayer(const float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && shape.getPosition().y > 0)
-            shape.move(0, -BallSpeed * dt * 2);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && shape.getPosition().y + shape.getSize().y < WindowHeight)
-            shape.move(0, BallSpeed * dt * 2);
+            shape.move(0, static_cast<float>(-BallSpeed) * dt * 2);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && shape.getPosition().y + shape.getSize().y < static_cast<
+                float>(WindowHeight))
+            shape.move(0, static_cast<float>(BallSpeed) * dt * 2);
     }
 
     void updateBot(const float dt, const sf::CircleShape &ballShape) {
@@ -33,14 +34,14 @@ public:
         const float enemyY = shape.getPosition().y + shape.getSize().y / 2;
 
         if (dis(gen) > 0.2f) {
-            if (enemyY < ballY && shape.getPosition().y + shape.getSize().y < WindowHeight) {
-                shape.move(0, BallSpeed * dt);
+            if (enemyY < ballY && shape.getPosition().y + shape.getSize().y < static_cast<float>(WindowHeight)) {
+                shape.move(0, static_cast<float>(BallSpeed) * dt);
             } else if (enemyY > ballY && shape.getPosition().y > 0) {
-                shape.move(0, -BallSpeed * dt);
+                shape.move(0, static_cast<float>(-BallSpeed) * dt);
             }
         } else {
             const float randomMove = dis(gen);
-            shape.move(0, randomMove * BallSpeed * dt);
+            shape.move(0, randomMove * static_cast<float>(BallSpeed) * dt);
         }
     }
 
@@ -59,16 +60,17 @@ public:
         shape.setPosition(static_cast<float>(WindowWidth) / 2, static_cast<float>(WindowHeight) / 2);
     }
 
-    void update(float dt) {
+    void update(const float dt) {
         if (isColliding(player) || isColliding(enemy)) dX *= -1;
-        if (shape.getPosition().y <= 0 || shape.getPosition().y + shape.getRadius() * 2 >= WindowHeight) dY *= -1;
-        shape.move(BallSpeed * 2 * dX * dt, BallSpeed * 2 * dY * dt);
+        if (shape.getPosition().y <= 0 || shape.getPosition().y + shape.getRadius() * 2 >= static_cast<float>(
+                WindowHeight)) dY *= -1;
+        shape.move(static_cast<float>(BallSpeed) * 2 * dX * dt, static_cast<float>(BallSpeed) * 2 * dY * dt);
 
         if (shape.getPosition().x < 0) {
             EnemyScore++;
             reset();
         }
-        if (shape.getPosition().x + shape.getRadius() * 2 > WindowWidth) {
+        if (shape.getPosition().x + shape.getRadius() * 2 > static_cast<float>(WindowWidth)) {
             PlayerScore++;
             reset();
         }
