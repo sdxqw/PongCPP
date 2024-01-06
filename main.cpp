@@ -131,14 +131,12 @@ private:
     float dY;
 };
 
-sf::RenderWindow window(sf::VideoMode(WindowWidth, WindowHeight), "Pong!!!",
-                        sf::Style::Titlebar | sf::Style::Close);
-
 class SceneManager {
 public:
     enum class SceneType { MainMenu, Game, GameOver };
 
-    SceneManager(Entity &player, Entity &enemy, Ball &ball) : player(player), enemy(enemy), ball(ball) {
+    SceneManager(Entity &player, Entity &enemy, Ball &ball, sf::RenderWindow &window) : player(player), enemy(enemy),
+        ball(ball), window(window) {
         if (!font.loadFromFile(FontPath)) std::cout << "Error loading font" << std::endl;
     }
 
@@ -183,19 +181,19 @@ public:
         }
     }
 
-    void render(sf::RenderWindow &window) {
+    void render() {
         switch (currentScene) {
             case SceneType::MainMenu:
-                renderMainMenu(window);
+                renderMainMenu();
                 break;
             case SceneType::Game:
                 player.render(window);
                 enemy.render(window);
                 ball.render(window);
-                renderScore(window);
+                renderScore();
                 break;
             case SceneType::GameOver:
-                renderGameOver(window);
+                renderGameOver();
                 break;
         }
     }
@@ -206,6 +204,7 @@ private:
     Entity &enemy;
     Ball &ball;
     sf::Font font;
+    sf::RenderWindow &window;
     int blinkCounter = 1000;
 
     void reset() const {
@@ -216,7 +215,7 @@ private:
         ball.getScorePlayer().reset();
     }
 
-    void renderScore(sf::RenderWindow &window) const {
+    void renderScore() const {
         sf::Text scorePlayerText;
         sf::Text scoreEnemyText;
         scorePlayerText.setFont(font);
@@ -235,7 +234,7 @@ private:
         window.draw(scoreEnemyText);
     }
 
-    void renderGameOver(sf::RenderWindow &window) {
+    void renderGameOver() {
         sf::Text gameOverText;
         sf::Text blinkyText;
         gameOverText.setFont(font);
@@ -272,7 +271,7 @@ private:
         window.draw(blinkyText);
     }
 
-    void renderMainMenu(sf::RenderWindow &window) {
+    void renderMainMenu() {
         sf::Text titleText;
         sf::Text blinkyText;
 
@@ -310,32 +309,26 @@ private:
     }
 };
 
-
-Entity player(10, window.getSize().y / 2 - PlayerWidth, PlayerWidth, PlayerHeight);
-Entity enemy(window.getSize().x - PlayerWidth - 10, window.getSize().y / 2 - PlayerWidth, PlayerWidth, PlayerHeight);
-Ball ball(player, enemy);
-SceneManager sceneManager = SceneManager(player, enemy, ball);
-
-void render() {
-    window.clear();
-    sceneManager.render(window);
-    window.display();
-}
-
-void update(float dt) {
-    sf::Event event{};
-    while (window.pollEvent(event)) {
-        if (event.type == sf::Event::Closed) window.close();
-    }
-    sceneManager.update(dt);
-}
-
 int main() {
+    sf::RenderWindow window(sf::VideoMode(WindowWidth, WindowHeight), "Pong!!!",
+                            sf::Style::Titlebar | sf::Style::Close);
+    Entity player(10, window.getSize().y / 2 - PlayerWidth, PlayerWidth, PlayerHeight);
+    Entity enemy(window.getSize().x - PlayerWidth - 10, window.getSize().y / 2 - PlayerWidth, PlayerWidth,
+                 PlayerHeight);
+    Ball ball(player, enemy);
+    SceneManager sceneManager(player, enemy, ball, window);
+
     sf::Clock clock;
     while (window.isOpen()) {
         const float dt = clock.restart().asSeconds();
-        update(dt);
-        render();
+        sf::Event event{};
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) window.close();
+        }
+        sceneManager.update(dt);
+        window.clear();
+        sceneManager.render();
+        window.display();
     }
     return EXIT_SUCCESS;
 }
