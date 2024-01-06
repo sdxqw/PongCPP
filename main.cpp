@@ -3,8 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-uint16_t PlayerWidth = 16, PlayerHeight = 64, BallRadius = 16, WindowWidth = 1280, WindowHeight = 720, BallSpeed =
-                320.0f;
+uint16_t PlayerWidth = 16, PlayerHeight = 64, BallRadius = 16, WindowWidth = 1280, WindowHeight = 720, BallSpeed = 320.0f;
 uint8_t PlayerScore = 0, EnemyScore = 0, MaxScore = 5;
 char FontPath[] = "assets/Minecraft.ttf";
 
@@ -20,8 +19,7 @@ public:
     void updatePlayer(const float dt) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) && shape.getPosition().y > 0)
             shape.move(0, static_cast<float>(-BallSpeed) * dt * 2);
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && shape.getPosition().y + shape.getSize().y < static_cast<
-                float>(WindowHeight))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) && shape.getPosition().y + shape.getSize().y < static_cast<float>(WindowHeight))
             shape.move(0, static_cast<float>(BallSpeed) * dt * 2);
     }
 
@@ -50,8 +48,7 @@ public:
 
 private:
     sf::RectangleShape shape;
-    uint16_t x;
-    uint16_t y;
+    uint16_t x, y;
 };
 
 class Ball {
@@ -92,11 +89,9 @@ public:
     sf::CircleShape &getShape() { return shape; }
 
 private:
-    Entity &player;
-    Entity &enemy;
+    Entity &player, &enemy;
     sf::CircleShape shape;
-    float dX;
-    float dY;
+    float dX, dY;
 };
 
 void drawText(const sf::Font &font, uint8_t size, const std::string &textToDisplay, float x, float y,
