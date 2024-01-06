@@ -110,8 +110,8 @@ void renderMainMenu(sf::RenderWindow &window, const sf::Font &font) {
 }
 
 void renderGame(sf::RenderWindow &window, Entity &player, Entity &enemy, Ball &ball, const sf::Font &font) {
-    drawText(font, 32, std::to_string(PlayerScore), static_cast<float>(WindowWidth) / 2.0f - 100, 10, window);
-    drawText(font, 32, std::to_string(EnemyScore), static_cast<float>(WindowWidth) / 2.0f + 100, 10, window);
+    drawText(font, 64, std::to_string(PlayerScore), static_cast<float>(WindowWidth) / 2.0f - 100, 10, window);
+    drawText(font, 64, std::to_string(EnemyScore), static_cast<float>(WindowWidth) / 2.0f + 100, 10, window);
     window.draw(player.getShape());
     window.draw(enemy.getShape());
     window.draw(ball.getShape());
