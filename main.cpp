@@ -3,17 +3,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-constexpr uint16_t PlayerWidth = 16;
-constexpr uint16_t PlayerHeight = 64;
-constexpr uint16_t BallRadius = 16;
-constexpr float BallSpeed = 320.0f;
-constexpr int MaxScore = 5;
-constexpr int WindowWidth = 1280;
-constexpr int WindowHeight = 720;
-constexpr char FontPath[] = "assets/Minecraft.ttf";
-
-uint8_t PlayerScore = 0;
-uint8_t EnemyScore = 0;
+uint16_t PlayerWidth = 16, PlayerHeight = 64, BallRadius = 16, WindowWidth = 1280, WindowHeight = 720, BallSpeed =
+                320.0f;
+uint8_t PlayerScore = 0, EnemyScore = 0, MaxScore = 5;
+char FontPath[] = "assets/Minecraft.ttf";
 
 enum class SceneType { MainMenu, Game, GameOver };
 
@@ -105,16 +98,9 @@ private:
 
 void drawText(const sf::Font &font, uint8_t size, const std::string &textToDisplay, float x, float y,
               sf::RenderWindow &window) {
-    sf::Text text;
-    text.setFont(font);
-    text.setString(textToDisplay);
-    text.setCharacterSize(size);
+    sf::Text text(textToDisplay, font, size);
     text.setFillColor(sf::Color::White);
-
-    const sf::FloatRect textRect = text.getLocalBounds();
-    text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
-    text.setPosition(x, y);
-
+    text.setPosition(x - text.getGlobalBounds().width / 2.0f, y - text.getGlobalBounds().height / 2.0f);
     window.draw(text);
 }
 
@@ -158,9 +144,8 @@ void reset(Entity &player, Entity &enemy, Ball &ball) {
 int main() {
     sf::RenderWindow window(sf::VideoMode(WindowWidth, WindowHeight), "Pong!!!",
                             sf::Style::Titlebar | sf::Style::Close);
-    Entity player(10, window.getSize().y / 2 - PlayerWidth, PlayerWidth, PlayerHeight);
-    Entity enemy(window.getSize().x - PlayerWidth - 10, window.getSize().y / 2 - PlayerWidth, PlayerWidth,
-                 PlayerHeight);
+    Entity player(10, WindowHeight / 2 - PlayerWidth, PlayerWidth, PlayerHeight);
+    Entity enemy(WindowWidth - PlayerWidth - 10, WindowHeight / 2 - PlayerWidth, PlayerWidth, PlayerHeight);
     Ball ball(player, enemy);
     sf::Font font;
     if (!font.loadFromFile(FontPath)) std::cout << "Error loading font" << std::endl;
@@ -169,7 +154,6 @@ int main() {
     SceneType currentScene = SceneType::MainMenu;
     while (window.isOpen()) {
         const float dt = clock.restart().asSeconds();
-
         sf::Event event{};
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) window.close();
