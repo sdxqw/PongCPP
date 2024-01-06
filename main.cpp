@@ -153,10 +153,10 @@ int main() {
     sf::Font font;
     if (!font.loadFromFile(FontPath)) std::cout << "Error loading font" << std::endl;
 
-    bool dead = false;
-
     sf::Clock clock;
     SceneType currentScene = SceneType::MainMenu;
+    bool resetGame = false;
+
     while (window.isOpen()) {
         const float dt = clock.restart().asSeconds();
         sf::Event event{};
@@ -164,15 +164,20 @@ int main() {
             if (event.type == sf::Event::Closed) window.close();
         }
 
-        if ((PlayerScore == MaxScore || EnemyScore == MaxScore) && !dead)
+        if ((PlayerScore == MaxScore || EnemyScore == MaxScore) && !resetGame) {
             currentScene = SceneType::GameOver;
+            resetGame = true;
+        }
 
         window.clear();
         switch (currentScene) {
             case SceneType::MainMenu:
                 reset(player, enemy, ball);
                 renderMainMenu(window, font);
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) currentScene = SceneType::Game;
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+                    currentScene = SceneType::Game;
+                    resetGame = true;
+                }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) window.close();
                 break;
             case SceneType::Game:
@@ -186,12 +191,12 @@ int main() {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
                     currentScene = SceneType::Game;
                     reset(player, enemy, ball);
-                    dead = true;
+                    resetGame = true;
                 }
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q)) {
                     currentScene = SceneType::MainMenu;
                     reset(player, enemy, ball);
-                    dead = true;
+                    resetGame = true;
                 }
                 break;
         }
@@ -199,3 +204,4 @@ int main() {
     }
     return EXIT_SUCCESS;
 }
+
